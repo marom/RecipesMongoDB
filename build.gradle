@@ -4,6 +4,7 @@ plugins {
 }
 
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'jacoco'
 
 group = 'com.marom'
 version = '0.0.1-SNAPSHOT'
@@ -29,4 +30,12 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+}
+
+//export test coverage
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled false
+    }
 }
