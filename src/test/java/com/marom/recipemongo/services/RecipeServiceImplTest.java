@@ -20,10 +20,10 @@ public class RecipeServiceImplTest {
     @Mock
     RecipeRepository recipeRepository;
 
-    RecipeService recipeService;
+    private RecipeService recipeService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         recipeService = new RecipeServiceImpl(recipeRepository);
     }
