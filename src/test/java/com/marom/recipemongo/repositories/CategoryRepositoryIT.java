@@ -31,6 +31,10 @@ public class CategoryRepositoryIT {
     @Before
     public void setUp() {
 
+        categoryRepository.deleteAll();
+        unitOfMeasureRepository.deleteAll();
+        recipeRepository.deleteAll();
+
         RecipeBootstrap recipeBootstrap = new RecipeBootstrap(categoryRepository, unitOfMeasureRepository, recipeRepository);
         recipeBootstrap.onApplicationEvent(null);
     }
