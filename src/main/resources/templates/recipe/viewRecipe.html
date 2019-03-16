@@ -34,16 +34,16 @@
         </div>
     </nav>
 </div>
-<div class="container-fluid" style="margin-top: 20px">
+<div class="container" style="margin-top: 20px">
         <div class="row">
-            <div class="col-md-6 col-md-offset-3">
+            <div class="col-md-9">
                 <div class="pannel-group">
                     <div class="panel panel-primary">
                         <div class="panel-heading">
                             <div class="row">
-                                <div class="col-md-3">
+                                <!--<div class="col-md-3">-->
                                     <h1 class="panel-title" th:text="${recipe.description}">Recipe Description Here!</h1>
-                                </div>
+                                <!--</div>-->
                             </div>
                         </div>
                     </div>
@@ -59,6 +59,41 @@
                                     <li th:each="category : ${recipe.categories}" th:text="${category.description}">cat three</li>
                                 </ul>
                             </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                    <h5>Prep Time:</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <p th:text="${recipe.prepTime}">30 min</p>
+                            </div>
+                         </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h5>Cook Time:</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <p th:text="${recipe.cookTime}">17 min</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h5>Difficulty:</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <p th:text="${recipe.difficulty}">Easy</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h5>Servings:</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <p th:text="${recipe.servings}">4</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 </div>
