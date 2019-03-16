@@ -92,6 +92,22 @@
                                 <p th:text="${recipe.servings}">4</p>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h5>Source:</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <p th:text="${recipe.source}">30 min</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <h5>URL:</h5>
+                            </div>
+                            <div class="col-md-3">
+                                <a th:href="${recipe.url}" th:text="${recipe.description}">http://www.example.com</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
