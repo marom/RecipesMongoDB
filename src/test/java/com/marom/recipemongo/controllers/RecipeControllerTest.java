@@ -3,8 +3,8 @@ package com.marom.recipemongo.controllers;
 import com.marom.recipemongo.domain.Recipe;
 import com.marom.recipemongo.exceptions.NotFoundException;
 import com.marom.recipemongo.services.RecipeService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -28,8 +28,8 @@ public class RecipeControllerTest {
 
     MockMvc mockMvc;
 
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(recipeController)
                 //for global exception handler
@@ -61,7 +61,7 @@ public class RecipeControllerTest {
     }
 
     @Test
-    public void showRecipeJUnit5ThrowException() throws Exception {
+    public void showRecipeJUnit5ThrowException() {
 
         when(recipeService.findById(anyString())).thenThrow(NotFoundException.class);
 
