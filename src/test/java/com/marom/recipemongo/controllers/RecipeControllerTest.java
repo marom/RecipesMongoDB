@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -57,5 +58,13 @@ public class RecipeControllerTest {
         mockMvc.perform(get("/recipe/weeref34434/show"))
                 .andExpect(status().isNotFound())
                 .andExpect(view().name("404"));
+    }
+
+    @Test
+    public void showRecipeJUnit5ThrowException() throws Exception {
+
+        when(recipeService.findById(anyString())).thenThrow(NotFoundException.class);
+
+        assertThrows(NotFoundException.class, () -> recipeService.findById(anyString()));
     }
 }
