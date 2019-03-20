@@ -40,4 +40,11 @@ public class RecipeController {
         modelAndView.addObject("exception", exception);
         return modelAndView;
     }
+
+    @GetMapping("/recipe/{recipeId}/update")
+    public String showRecipeForUpdate(@PathVariable String recipeId, Model model) {
+
+        model.addAttribute("recipe", recipeService.findById(recipeId));
+        return "recipe/editRecipe";
+    }
 }
