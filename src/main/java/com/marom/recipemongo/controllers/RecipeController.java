@@ -1,24 +1,27 @@
 package com.marom.recipemongo.controllers;
 
+import com.marom.recipemongo.converters.RecipeToRecipeDto;
 import com.marom.recipemongo.domain.Recipe;
 import com.marom.recipemongo.exceptions.NotFoundException;
+import com.marom.recipemongo.services.CategoryService;
 import com.marom.recipemongo.services.RecipeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class RecipeController {
 
     private RecipeService recipeService;
+    private RecipeToRecipeDto recipeToRecipeDto;
+    private CategoryService categoryService;
 
-    public RecipeController(RecipeService recipeService) {
+    public RecipeController(RecipeService recipeService, RecipeToRecipeDto recipeToRecipeDto, CategoryService categoryService) {
         this.recipeService = recipeService;
+        this.recipeToRecipeDto = recipeToRecipeDto;
+        this.categoryService = categoryService;
     }
 
 
@@ -44,7 +47,8 @@ public class RecipeController {
     @GetMapping("/recipe/{recipeId}/update")
     public String showRecipeForUpdate(@PathVariable String recipeId, Model model) {
 
-        model.addAttribute("recipe", recipeService.findById(recipeId));
+        model.addAttribute("recipe", recipeToRecipeDto.convert(recipeService.findById(recipeId)));
+        model.addAttribute("categories", categoryService.getAllCategories());
         return "recipe/editRecipe";
     }
 }
