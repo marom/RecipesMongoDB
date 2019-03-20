@@ -1,7 +1,9 @@
 package com.marom.recipemongo.controllers;
 
+import com.marom.recipemongo.converters.RecipeToRecipeDto;
 import com.marom.recipemongo.domain.Recipe;
 import com.marom.recipemongo.exceptions.NotFoundException;
+import com.marom.recipemongo.services.CategoryService;
 import com.marom.recipemongo.services.RecipeService;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +24,12 @@ public class RecipeControllerTest {
 
     @Mock
     private RecipeService recipeService;
+
+    @Mock
+    private CategoryService categoryService;
+
+    @Mock
+    private RecipeToRecipeDto recipeToRecipeDto;
 
     @InjectMocks
     private RecipeController recipeController;
@@ -72,7 +80,6 @@ public class RecipeControllerTest {
     public void showRecipeForEdit() throws Exception {
 
         Recipe recipe = Recipe.builder().id("qwerty").build();
-
         when(recipeService.findById(anyString())).thenReturn(recipe);
 
         mockMvc.perform(get("/recipe/qwerty/update"))
