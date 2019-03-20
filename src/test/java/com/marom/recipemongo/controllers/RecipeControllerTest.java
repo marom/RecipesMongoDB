@@ -1,7 +1,9 @@
 package com.marom.recipemongo.controllers;
 
 import com.marom.recipemongo.converters.RecipeToRecipeDto;
+import com.marom.recipemongo.domain.Category;
 import com.marom.recipemongo.domain.Recipe;
+import com.marom.recipemongo.dto.RecipeDto;
 import com.marom.recipemongo.exceptions.NotFoundException;
 import com.marom.recipemongo.services.CategoryService;
 import com.marom.recipemongo.services.RecipeService;
@@ -13,12 +15,16 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.beans.HasPropertyWithValue.hasProperty;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class RecipeControllerTest {
 
@@ -80,10 +86,28 @@ public class RecipeControllerTest {
     public void showRecipeForEdit() throws Exception {
 
         Recipe recipe = Recipe.builder().id("qwerty").build();
+
+        RecipeDto recipeDto = new RecipeDto();
+        recipeDto.setId("qwerty");
+
+        Category categoryMexican = Category.builder().id("catM").description("Mexican").build();
+        Category categoryAsian = Category.builder().id("catA").description("Asian").build();
+        Category categoryPolish = Category.builder().id("catP").description("Polish").build();
+
+        Set<Category> categories = new HashSet<>();
+        categories.add(categoryMexican);
+        categories.add(categoryAsian);
+        categories.add(categoryPolish);
+
         when(recipeService.findById(anyString())).thenReturn(recipe);
+        when(recipeToRecipeDto.convert(recipe)).thenReturn(recipeDto);
+        when(categoryService.getAllCategories()).thenReturn(categories);
 
         mockMvc.perform(get("/recipe/qwerty/update"))
                 .andExpect(status().isOk())
+                .andExpect(model().attributeExists("recipe"))
+                .andExpect(model().attribute("recipe", hasProperty("id", is("qwerty"))))
+                .andExpect(model().attributeExists("categories"))
                 .andExpect(view().name("recipe/editRecipe"));
     }
 }
