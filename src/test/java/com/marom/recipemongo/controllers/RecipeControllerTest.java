@@ -67,4 +67,16 @@ public class RecipeControllerTest {
 
         assertThrows(NotFoundException.class, () -> recipeService.findById(anyString()));
     }
+
+    @Test
+    public void showRecipeForEdit() throws Exception {
+
+        Recipe recipe = Recipe.builder().id("qwerty").build();
+
+        when(recipeService.findById(anyString())).thenReturn(recipe);
+
+        mockMvc.perform(get("/recipe/qwerty/update"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("recipe/editRecipe"));
+    }
 }
