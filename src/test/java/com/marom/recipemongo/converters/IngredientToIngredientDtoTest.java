@@ -16,7 +16,7 @@ public class IngredientToIngredientDtoTest {
     private UnitOfMeasureToUnitOfMeasureDto unitOfMeasureToUnitOfMeasureDto;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         ingredientToIngredientDto = new IngredientToIngredientDto(new UnitOfMeasureToUnitOfMeasureDto());
         unitOfMeasureToUnitOfMeasureDto = new UnitOfMeasureToUnitOfMeasureDto();
     }
