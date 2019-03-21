@@ -154,4 +154,18 @@ public class RecipeDtoToRecipeTest {
         assertEquals(recipe.getId(), recipeDto.getId());
         assertThat(recipe.getCategories(), hasSize(0));
     }
+
+    @Test
+    public void whenConvertWithNotesNullThenCorrect() {
+
+        //given
+        recipeDto.setNotes(null);
+
+        //when
+        final Recipe recipe = toRecipe.convert(recipeDto);
+
+        //then
+        assertEquals(recipe.getId(), recipeDto.getId());
+        assertNull(recipe.getNotes());
+    }
 }
