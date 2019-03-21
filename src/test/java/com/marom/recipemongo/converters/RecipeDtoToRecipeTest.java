@@ -126,4 +126,32 @@ public class RecipeDtoToRecipeTest {
         assertEquals(recipe.getId(), recipeDto.getId());
         assertThat(recipe.getCategories(), hasSize(0));
     }
+
+    @Test
+    public void whenConvertWithIngredientsIsEmptyThenCorrect() {
+
+        //given
+        recipeDto.setIngredients(new HashSet<>());
+
+        //when
+        final Recipe recipe = toRecipe.convert(recipeDto);
+
+        //then
+        assertEquals(recipe.getId(), recipeDto.getId());
+        assertThat(recipe.getIngredients(), hasSize(0));
+    }
+
+    @Test
+    public void whenConvertWithCategoriesIsEmptyThenCorrect() {
+
+        //given
+        recipeDto.setCategories(new HashSet<>());
+
+        //when
+        final Recipe recipe = toRecipe.convert(recipeDto);
+
+        //then
+        assertEquals(recipe.getId(), recipeDto.getId());
+        assertThat(recipe.getCategories(), hasSize(0));
+    }
 }
