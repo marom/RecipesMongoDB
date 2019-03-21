@@ -10,7 +10,6 @@ import java.math.BigDecimal;
 public class IngredientDto {
 
     private String id;
-    private Long recipeId;
     private String description;
     private BigDecimal amount;
     private UnitOfMeasureDto uom;
