@@ -22,7 +22,6 @@ public class CategoryConverter implements Converter<String, CategoryDto> {
     @Override
     public CategoryDto convert(String categoryDtoId) {
 
-        log.info("trying to convert id: " + categoryDtoId + " to categoryDto");
         if (categoryDtoId == null) {
             return null;
         }
