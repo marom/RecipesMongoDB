@@ -27,6 +27,7 @@ public class IngredientToIngredientDtoTest {
         // given
         final Ingredient ingredient = new Ingredient();
         ingredient.setId("12ws");
+        ingredient.setRecipeId("rec12");
         ingredient.setAmount(new BigDecimal(12.43));
         ingredient.setDescription("Ingredient Description");
 
@@ -41,6 +42,7 @@ public class IngredientToIngredientDtoTest {
 
         // then
         assertEquals(ingredientDto.getId(), ingredient.getId());
+        assertEquals(ingredientDto.getRecipeId(), ingredient.getRecipeId());
         assertEquals(ingredientDto.getAmount(), ingredient.getAmount());
         assertEquals(ingredientDto.getDescription(), ingredient.getDescription());
         assertEquals(ingredientDto.getUom().getId(), unitOfMeasureToUnitOfMeasureDto.convert(ingredient.getUom()).getId());
