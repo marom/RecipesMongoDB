@@ -68,15 +68,16 @@
                                 </div>
                                 <div class="col-md-9 form-group">
                                     <div>
-                                    <li th:each="category : ${categories}">
-                                        <input type="checkbox" th:field="*{categories}" th:value="${category}" />
-                                        <label th:for="${#ids.prev('categories')}" th:text="${category.description}"></label>
+                                    <li th:each="category : ${allCategories}">
+                                        <input type="checkbox" th:field="*{categories}" th:value="${category.id}" />
+                                        <label
+                                                th:for="${#ids.prev('categories')}"
+                                                th:text="${category.description}"></label>
                                     </li>
                                     </div>
                                     <div class="radio" th:remove="all">
                                         <label>
-                                            <input type="checkbox" value=""/>
-                                            Cat 2
+                                            <input type="checkbox" value=""/>Cat 2
                                         </label>
                                     </div>
                                 </div>
@@ -170,6 +171,12 @@
                                         ' - ' + ingredient.getDescription())}">1 Teaspoon of Sugar
                                         </li>
                                     </ul>
+                                    <div th:each="ingredientEach, idx : ${recipe.ingredients}" >
+                                        <input  type="hidden" th:field="*{ingredients[__${idx.index}__].id}" />
+                                        <input  type="hidden" th:field="*{ingredients[__${idx.index}__].description}" />
+                                        <input  type="hidden" th:field="*{ingredients[__${idx.index}__].amount}" />
+                                        <input  type="hidden" th:field="*{ingredients[__${idx.index}__].uom.id}" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
