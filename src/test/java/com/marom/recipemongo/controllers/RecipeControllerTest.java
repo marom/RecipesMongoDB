@@ -1,5 +1,6 @@
 package com.marom.recipemongo.controllers;
 
+import com.marom.recipemongo.converters.CategoryToCategoryDto;
 import com.marom.recipemongo.converters.RecipeToRecipeDto;
 import com.marom.recipemongo.domain.Category;
 import com.marom.recipemongo.domain.Recipe;
@@ -36,6 +37,9 @@ public class RecipeControllerTest {
 
     @Mock
     private RecipeToRecipeDto recipeToRecipeDto;
+
+    @Mock
+    private CategoryToCategoryDto categoryToCategoryDto;
 
     @InjectMocks
     private RecipeController recipeController;
@@ -107,7 +111,7 @@ public class RecipeControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("recipe"))
                 .andExpect(model().attribute("recipe", hasProperty("id", is("qwerty"))))
-                .andExpect(model().attributeExists("categories"))
+                .andExpect(model().attributeExists("allCategories"))
                 .andExpect(view().name("recipe/editRecipe"));
     }
 }

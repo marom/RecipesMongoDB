@@ -2,6 +2,7 @@ package com.marom.recipemongo.dto;
 
 import com.marom.recipemongo.domain.Difficulty;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.URL;
 
@@ -9,11 +10,12 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class RecipeDto {
 
 
@@ -41,9 +43,9 @@ public class RecipeDto {
 
     @NotBlank
     private String directions;
-    private Set<IngredientDto> ingredients = new HashSet<>();
+    private List<IngredientDto> ingredients = new ArrayList<>();
     private Byte[] image;
     private Difficulty difficulty;
     private NotesDto notes;
-    private Set<CategoryDto> categories = new HashSet<>();
+    private List<CategoryDto> categories = new ArrayList<>();
 }

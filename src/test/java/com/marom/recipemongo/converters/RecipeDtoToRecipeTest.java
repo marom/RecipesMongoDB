@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -62,11 +63,11 @@ public class RecipeDtoToRecipeTest {
         recipeDto.setUrl("www.url.com");
         recipeDto.setSource("source");
         recipeDto.setDirections("some directions");
-        recipeDto.setIngredients(new HashSet<>(Arrays.asList(ingredientDto)));
+        recipeDto.setIngredients(Arrays.asList(ingredientDto));
         recipeDto.setImage(ArrayUtils.toObject("Any String to bytes".getBytes()));
         recipeDto.setDifficulty(Difficulty.EASY);
         recipeDto.setNotes(notesDto);
-        recipeDto.setCategories(new HashSet<>(Arrays.asList(categoryDto)));
+        recipeDto.setCategories(Arrays.asList(categoryDto));
 
     }
 
@@ -131,7 +132,7 @@ public class RecipeDtoToRecipeTest {
     public void whenConvertWithIngredientsIsEmptyThenCorrect() {
 
         //given
-        recipeDto.setIngredients(new HashSet<>());
+        recipeDto.setIngredients(new ArrayList<>());
 
         //when
         final Recipe recipe = toRecipe.convert(recipeDto);
@@ -145,7 +146,7 @@ public class RecipeDtoToRecipeTest {
     public void whenConvertWithCategoriesIsEmptyThenCorrect() {
 
         //given
-        recipeDto.setCategories(new HashSet<>());
+        recipeDto.setCategories(new ArrayList<>());
 
         //when
         final Recipe recipe = toRecipe.convert(recipeDto);
