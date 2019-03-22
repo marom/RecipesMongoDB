@@ -2,6 +2,7 @@ package com.marom.recipemongo.controllers;
 
 import com.marom.recipemongo.converters.RecipeToRecipeDto;
 import com.marom.recipemongo.dto.RecipeDto;
+import com.marom.recipemongo.services.IngredientService;
 import com.marom.recipemongo.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -14,10 +15,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class IngredientController {
 
     private RecipeService recipeService;
+    private IngredientService ingredientService;
     private RecipeToRecipeDto toRecipeDto;
 
-    public IngredientController(RecipeService recipeService, RecipeToRecipeDto toRecipeDto) {
+    public IngredientController(RecipeService recipeService, IngredientService ingredientService, RecipeToRecipeDto toRecipeDto) {
         this.recipeService = recipeService;
+        this.ingredientService = ingredientService;
         this.toRecipeDto = toRecipeDto;
     }
 
@@ -30,4 +33,14 @@ public class IngredientController {
 
         return "recipe/ingredient/list";
     }
+
+    @GetMapping("recipe/{recipeId}/ingredient/{ingredientId}/show")
+    public String showIngredientDetails(@PathVariable String recipeId,
+                                        @PathVariable String ingredientId,
+                                        Model model) {
+        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId));
+        return "recipe/ingredient/show";
+    }
+
+
 }
