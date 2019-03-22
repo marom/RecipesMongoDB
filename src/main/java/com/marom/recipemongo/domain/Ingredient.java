@@ -18,6 +18,7 @@ public class Ingredient {
 
     @Id
     private String id = UUID.randomUUID().toString();
+    private String recipeId;
     private String description;
     private BigDecimal amount;
 
