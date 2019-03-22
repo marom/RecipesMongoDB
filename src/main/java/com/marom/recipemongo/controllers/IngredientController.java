@@ -1,14 +1,26 @@
 package com.marom.recipemongo.controllers;
 
+import com.marom.recipemongo.converters.IngredientDtoToIngredient;
+import com.marom.recipemongo.converters.IngredientToIngredientDto;
 import com.marom.recipemongo.converters.RecipeToRecipeDto;
+import com.marom.recipemongo.converters.UnitOfMeasureToUnitOfMeasureDto;
+import com.marom.recipemongo.domain.Ingredient;
+import com.marom.recipemongo.dto.IngredientDto;
 import com.marom.recipemongo.dto.RecipeDto;
+import com.marom.recipemongo.dto.UnitOfMeasureDto;
 import com.marom.recipemongo.services.IngredientService;
 import com.marom.recipemongo.services.RecipeService;
+import com.marom.recipemongo.services.UnitOfMeasureService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -17,11 +29,19 @@ public class IngredientController {
     private RecipeService recipeService;
     private IngredientService ingredientService;
     private RecipeToRecipeDto toRecipeDto;
+    private IngredientToIngredientDto toIngredientDto;
+    private UnitOfMeasureToUnitOfMeasureDto toUnitOfMeasureDto;
+    private UnitOfMeasureService unitOfMeasureService;
+    private IngredientDtoToIngredient toIngredient;
 
-    public IngredientController(RecipeService recipeService, IngredientService ingredientService, RecipeToRecipeDto toRecipeDto) {
+    public IngredientController(RecipeService recipeService, IngredientService ingredientService, RecipeToRecipeDto toRecipeDto, IngredientToIngredientDto toIngredientDto, UnitOfMeasureToUnitOfMeasureDto toUnitOfMeasureDto, UnitOfMeasureService unitOfMeasureService, IngredientDtoToIngredient toIngredient) {
         this.recipeService = recipeService;
         this.ingredientService = ingredientService;
         this.toRecipeDto = toRecipeDto;
+        this.toIngredientDto = toIngredientDto;
+        this.toUnitOfMeasureDto = toUnitOfMeasureDto;
+        this.unitOfMeasureService = unitOfMeasureService;
+        this.toIngredient = toIngredient;
     }
 
     @GetMapping("/recipe/{recipeId}/ingredients")
@@ -38,9 +58,37 @@ public class IngredientController {
     public String showIngredientDetails(@PathVariable String recipeId,
                                         @PathVariable String ingredientId,
                                         Model model) {
-        model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId));
+        final Ingredient ingredient = ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId);
+        ingredient.setRecipeId(recipeId);
+
+        model.addAttribute("ingredient", toIngredientDto.convert(ingredient));
         return "recipe/ingredient/show";
     }
 
+    @GetMapping("recipe/{recipeId}/ingredient/{ingredientId}/update")
+    public String updateRecipeIngredient(@PathVariable String recipeId,
+                                         @PathVariable String ingredientId, Model model){
 
+        IngredientDto ingredientDto = toIngredientDto.convert(ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId));
+        ingredientDto.setRecipeId(recipeId);
+
+        List<UnitOfMeasureDto> unitOfMeasureDtoList = new ArrayList<>();
+        unitOfMeasureService.listAllUoms().forEach(uom -> unitOfMeasureDtoList.add(toUnitOfMeasureDto.convert(uom)));
+
+        model.addAttribute("ingredient", ingredientDto);
+        model.addAttribute("uomList", unitOfMeasureDtoList);
+        return "recipe/ingredient/updateIngredient";
+    }
+
+    @PostMapping("recipe/{recipeId}/ingredient")
+    public String saveOrUpdate(@ModelAttribute IngredientDto ingredientDto){
+
+
+        Ingredient savedIngredient = ingredientService.saveIngredient(toIngredient.convert(ingredientDto));
+
+        log.debug("saved recipe id:" + savedIngredient.getRecipeId());
+        log.debug("saved ingredient id:" + savedIngredient.getId());
+
+        return "redirect:/recipe/" + savedIngredient.getRecipeId() + "/ingredient/" + savedIngredient.getId() + "/show";
+    }
 }
