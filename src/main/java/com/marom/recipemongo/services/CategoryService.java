@@ -7,4 +7,6 @@ import java.util.Set;
 public interface CategoryService {
 
     Set<Category> getAllCategories();
+
+    Category findById(String id);
 }
