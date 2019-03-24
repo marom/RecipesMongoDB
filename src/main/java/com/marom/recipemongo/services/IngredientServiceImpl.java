@@ -70,12 +70,10 @@ public class IngredientServiceImpl implements IngredientService {
                 ingredientFound.setDescription(ingredient.getDescription());
                 ingredientFound.setAmount(ingredient.getAmount());
                 ingredientFound.setRecipeId(ingredient.getRecipeId());
-                ingredientFound.setUom(unitOfMeasureRepository
-                        .findById(ingredient.getUom().getId())
+                ingredientFound.setUom(unitOfMeasureRepository.findById(ingredient.getUom().getId())
                         .orElseThrow(() -> new RuntimeException("UOM NOT FOUND"))); //todo address this
             } else {
                 //add new Ingredient
-                //Ingredient newIngredient = ingredientCommandToIngredient.convert(command);
                 ingredient.setId(UUID.randomUUID().toString());
                 ingredient.setRecipeId(recipe.getId());
                 recipe.addIngredient(ingredient);
