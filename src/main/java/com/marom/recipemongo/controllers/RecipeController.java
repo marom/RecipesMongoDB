@@ -44,7 +44,7 @@ public class RecipeController {
     @GetMapping("/recipe/{recipeId}/show")
     public String showRecipe(@PathVariable String recipeId, Model model) {
 
-        Recipe recipe = recipeService.findById(recipeId);
+        Recipe recipe = recipeService.findById(recipeId).block();
         model.addAttribute("recipe", recipe);
         return "recipe/viewRecipe";
     }
@@ -66,7 +66,7 @@ public class RecipeController {
         List<CategoryDto> categoriesDto = new ArrayList<>();
         categoryService.getAllCategories().forEach((Category category) -> categoriesDto.add(categoryToCategoryDto.convert(category)));
 
-        model.addAttribute("recipe", recipeToRecipeDto.convert(recipeService.findById(recipeId)));
+        model.addAttribute("recipe", recipeToRecipeDto.convert(recipeService.findById(recipeId).block()));
         model.addAttribute("allCategories", categoriesDto);
 
         return "recipe/editRecipe";
@@ -79,8 +79,14 @@ public class RecipeController {
             bindingResult.getAllErrors().forEach(objectError -> log.error(objectError.toString()));
             return "recipe/editRecipe";
         }
-        Recipe savedRecipe = recipeService.saveRecipe(recipeDtoToRecipe.convert(recipeDto));
+        Recipe savedRecipe = recipeService.saveRecipe(recipeDtoToRecipe.convert(recipeDto)).block();
 
         return "redirect:/recipe/" + savedRecipe.getId() + "/show" ;
+    }
+
+    @GetMapping("/recipe/{id}/delete")
+    public String deleteRecipe(@PathVariable String id) {
+        recipeService.deleteById(id);
+        return "redirect:/";
     }
 }

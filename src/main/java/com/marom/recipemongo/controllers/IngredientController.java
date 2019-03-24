@@ -46,7 +46,7 @@ public class IngredientController {
     public String listIngredients(@PathVariable String recipeId, Model model){
         log.debug("Getting ingredient list for recipe id: " + recipeId);
 
-        final RecipeDto recipeDto = toRecipeDto.convert(recipeService.findById(recipeId));
+        final RecipeDto recipeDto = toRecipeDto.convert(recipeService.findById(recipeId).block());
         model.addAttribute("recipe", recipeDto);
 
         return "recipe/ingredient/list";
@@ -103,7 +103,7 @@ public class IngredientController {
     public String newRecipe(@PathVariable String recipeId, Model model){
 
         //make sure we have a good id value
-        Recipe recipe = recipeService.findById(recipeId);
+        Recipe recipe = recipeService.findById(recipeId).block();
         //todo raise exception if null
 
         //need to return back parent id for hidden form property
