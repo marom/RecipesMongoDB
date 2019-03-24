@@ -1,11 +1,7 @@
 package com.marom.recipemongo.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -14,6 +10,7 @@ import java.util.UUID;
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class Ingredient {
 
     @Id
@@ -21,12 +18,7 @@ public class Ingredient {
     private String recipeId;
     private String description;
     private BigDecimal amount;
-
-    @DBRef
     private UnitOfMeasure uom;
-
-    public Ingredient() {
-    }
 
     public Ingredient(String description, BigDecimal amount, UnitOfMeasure uom) {
         this.description = description;
