@@ -1,10 +1,9 @@
 package com.marom.recipemongo.services;
 
 import com.marom.recipemongo.domain.UnitOfMeasure;
-
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface UnitOfMeasureService {
 
-    List<UnitOfMeasure> listAllUoms();
+    Flux<UnitOfMeasure> listAllUoms();
 }

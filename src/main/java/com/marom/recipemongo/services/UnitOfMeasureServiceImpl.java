@@ -1,27 +1,22 @@
 package com.marom.recipemongo.services;
 
 import com.marom.recipemongo.domain.UnitOfMeasure;
-import com.marom.recipemongo.repositories.UnitOfMeasureRepository;
+import com.marom.recipemongo.repositories.reactive.UnitOfMeasureReactiveRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import reactor.core.publisher.Flux;
 
 @Service
 public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
 
-    private UnitOfMeasureRepository unitOfMeasureRepository;
+    private UnitOfMeasureReactiveRepository unitOfMeasureRepository;
 
-    public UnitOfMeasureServiceImpl(UnitOfMeasureRepository unitOfMeasureRepository) {
-        this.unitOfMeasureRepository = unitOfMeasureRepository;
+    public UnitOfMeasureServiceImpl(UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository) {
+        this.unitOfMeasureRepository = unitOfMeasureReactiveRepository;
     }
 
     @Override
-    public List<UnitOfMeasure> listAllUoms() {
+    public Flux<UnitOfMeasure> listAllUoms() {
 
-        return StreamSupport.stream(unitOfMeasureRepository.findAll()
-                .spliterator(), false)
-                .collect(Collectors.toList());
+       return unitOfMeasureRepository.findAll();
     }
 }
