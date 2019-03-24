@@ -29,11 +29,11 @@ public class IngredientServiceImpl implements IngredientService {
     @Override
     public Mono<Ingredient> findByRecipeIdAndIngredientId(String recipeId, String ingredientId) {
 
-        return recipeRepository.findById(recipeId)
-                .map(recipe -> recipe.getIngredients()
-                .stream().filter(ingredient -> ingredient.getId().equalsIgnoreCase(ingredientId))
-                .findFirst())
-                .flatMap(optional -> optional.map(Mono::just).orElseGet(Mono::empty));
+        return recipeRepository
+                .findById(recipeId)
+                .flatMapIterable(Recipe::getIngredients)
+                .filter(ingredient -> ingredient.getId().equalsIgnoreCase(ingredientId))
+                .single();
     }
 
     @Override
