@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -75,6 +76,7 @@ public class IngredientServiceImpl implements IngredientService {
             } else {
                 //add new Ingredient
                 //Ingredient newIngredient = ingredientCommandToIngredient.convert(command);
+                ingredient.setId(UUID.randomUUID().toString());
                 ingredient.setRecipeId(recipe.getId());
                 recipe.addIngredient(ingredient);
             }

@@ -5,6 +5,7 @@ import com.marom.recipemongo.converters.IngredientToIngredientDto;
 import com.marom.recipemongo.converters.RecipeToRecipeDto;
 import com.marom.recipemongo.converters.UnitOfMeasureToUnitOfMeasureDto;
 import com.marom.recipemongo.domain.Ingredient;
+import com.marom.recipemongo.domain.Recipe;
 import com.marom.recipemongo.dto.IngredientDto;
 import com.marom.recipemongo.dto.RecipeDto;
 import com.marom.recipemongo.dto.UnitOfMeasureDto;
@@ -96,5 +97,25 @@ public class IngredientController {
         ingredientService.deleteById(recipeId, ingredientId);
 
         return "redirect:/recipe/" + recipeId + "/ingredients";
+    }
+
+    @GetMapping("recipe/{recipeId}/ingredient/new")
+    public String newRecipe(@PathVariable String recipeId, Model model){
+
+        //make sure we have a good id value
+        Recipe recipe = recipeService.findById(recipeId);
+        //todo raise exception if null
+
+        //need to return back parent id for hidden form property
+        IngredientDto ingredientDto = new IngredientDto();
+        ingredientDto.setRecipeId(recipe.getId());
+        model.addAttribute("ingredient", ingredientDto);
+
+        //init uom
+        ingredientDto.setUom(new UnitOfMeasureDto());
+
+        model.addAttribute("uomList",  unitOfMeasureService.listAllUoms());
+
+        return "recipe/ingredient/updateIngredient";
     }
 }
