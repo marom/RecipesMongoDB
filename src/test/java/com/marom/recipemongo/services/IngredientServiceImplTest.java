@@ -66,46 +66,6 @@ public class IngredientServiceImplTest {
         assertEquals(foundIngredient.getId(), salt.getId());
     }
 
-    @Ignore("ignore this test as refactor to reactive services still in progress")
-    @Test(expected = NotFoundException.class)
-    public void whenRecipeNotFoundThenNotFoundExceptionIsThrown() {
-
-        //when
-        when(recipeRepository.findById(anyString())).thenReturn(Mono.empty());
-
-        ingredientService.findByRecipeIdAndIngredientId("rec1", "ingr1");
-
-        // then exception is thrown
-    }
-
-    @Ignore("ignore this test as refactor to reactive services still in progress")
-    @Test(expected = NotFoundException.class)
-    public void whenFindByRecipeIdAndIngredientIdIngredientNotFoundThenNotFoundException() {
-
-        //given
-        Recipe recipe = Recipe.builder().id("recipe1").build();
-        Ingredient salt = Ingredient.builder().id("salt1").build();
-        Ingredient pepper = Ingredient.builder().id("pepper").build();
-        Ingredient water = Ingredient.builder().id("water").build();
-
-        Set<Ingredient> ingredients = new HashSet<>();
-        ingredients.add(salt);
-        ingredients.add(pepper);
-        ingredients.add(water);
-        recipe.setIngredients(ingredients);
-
-        Mono<Recipe> recipeMono = Mono.just(recipe);
-
-
-        //when
-        when(recipeRepository.findById(anyString())).thenReturn(recipeMono);
-
-        ingredientService.findByRecipeIdAndIngredientId("recipe1", "nothing");
-
-        //then
-        // exception is thrown as Ingredient is not matched/found
-    }
-
     @Test
     public void testSaveForUpdateIngredient() {
         //given
@@ -174,6 +134,7 @@ public class IngredientServiceImplTest {
         Mono<Recipe> recipeMono = Mono.just(recipe);
 
         when(recipeRepository.findById(anyString())).thenReturn(recipeMono);
+        when(recipeRepository.save(any())).thenReturn(Mono.empty());
 
         //when
         ingredientService.deleteById("rec2", "ingr23").block();
