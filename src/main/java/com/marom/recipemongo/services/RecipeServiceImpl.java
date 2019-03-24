@@ -1,45 +1,42 @@
 package com.marom.recipemongo.services;
 
 import com.marom.recipemongo.domain.Recipe;
-import com.marom.recipemongo.exceptions.NotFoundException;
-import com.marom.recipemongo.repositories.RecipeRepository;
+import com.marom.recipemongo.repositories.reactive.RecipeReactiveRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
 
-    private RecipeRepository recipeRepository;
+    private RecipeReactiveRepository recipeRepository;
 
-    public RecipeServiceImpl(RecipeRepository recipeRepository) {
+    public RecipeServiceImpl(RecipeReactiveRepository recipeRepository) {
         this.recipeRepository = recipeRepository;
     }
 
     @Override
-    public Set<Recipe> getAllRecipes() {
+    public Flux<Recipe> getAllRecipes() {
 
-        Set<Recipe> allRecipes = new HashSet<>();
-        recipeRepository.findAll().forEach(allRecipes::add);
-        return allRecipes;
+        return  recipeRepository.findAll();
     }
 
     @Override
-    public Recipe findById(String id) {
+    public Mono<Recipe> findById(String id) {
 
-        Optional<Recipe> recipeOptional = recipeRepository.findById(id);
-
-        if (!recipeOptional.isPresent()) {
-            throw new NotFoundException("Recipe Not Found for Recipe Id: " + id);
-        }
-        return recipeOptional.get();
+        return recipeRepository.findById(id);
     }
 
     @Override
-    public Recipe saveRecipe(Recipe recipe) {
+    public Mono<Recipe> saveRecipe(Recipe recipe) {
 
         return recipeRepository.save(recipe);
+    }
+
+    @Override
+    public Mono<Void> deleteById(String recipeId) {
+
+        recipeRepository.deleteById(recipeId).block();
+        return Mono.empty();
     }
 }
