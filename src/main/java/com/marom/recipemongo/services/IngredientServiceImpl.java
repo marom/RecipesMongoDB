@@ -43,7 +43,6 @@ public class IngredientServiceImpl implements IngredientService {
 
         if(!recipeOptional.isPresent()){
             throw  new NotFoundException("Recipe not found for id: " + ingredient.getRecipeId());
-            //return new IngredientCommand();
         } else {
             Recipe recipe = recipeOptional.get();
 
@@ -98,7 +97,7 @@ public class IngredientServiceImpl implements IngredientService {
                 log.debug("found Ingredient");
 
                 recipe.getIngredients().remove(ingredientOptional.get());
-                recipeRepository.save(recipe);
+                recipeRepository.save(recipe).block();
             }
         } else {
             log.debug("Recipe Id Not found. Id:" + recipeId);
