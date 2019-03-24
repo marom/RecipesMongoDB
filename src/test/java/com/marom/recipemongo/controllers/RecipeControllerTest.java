@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import reactor.core.publisher.Mono;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -55,11 +56,10 @@ public class RecipeControllerTest {
                 .build();
     }
 
-
     @Test
     public void showRecipe() throws Exception {
 
-        Recipe recipe = Recipe.builder().id("23er56").build();
+        Mono<Recipe> recipe = Mono.just(Recipe.builder().id("23er56").build());
 
         when(recipeService.findById(anyString())).thenReturn(recipe);
 
@@ -89,7 +89,7 @@ public class RecipeControllerTest {
     @Test
     public void showRecipeForEdit() throws Exception {
 
-        Recipe recipe = Recipe.builder().id("qwerty").build();
+        Mono<Recipe> recipe = Mono.just(Recipe.builder().id("qwerty").build());
 
         RecipeDto recipeDto = new RecipeDto();
         recipeDto.setId("qwerty");
@@ -104,7 +104,7 @@ public class RecipeControllerTest {
         categories.add(categoryPolish);
 
         when(recipeService.findById(anyString())).thenReturn(recipe);
-        when(recipeToRecipeDto.convert(recipe)).thenReturn(recipeDto);
+        when(recipeToRecipeDto.convert(recipe.block())).thenReturn(recipeDto);
         when(categoryService.getAllCategories()).thenReturn(categories);
 
         mockMvc.perform(get("/recipe/qwerty/update"))
