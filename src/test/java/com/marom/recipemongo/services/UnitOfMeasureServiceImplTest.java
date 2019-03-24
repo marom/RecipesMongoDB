@@ -1,14 +1,14 @@
 package com.marom.recipemongo.services;
 
 import com.marom.recipemongo.domain.UnitOfMeasure;
-import com.marom.recipemongo.repositories.UnitOfMeasureRepository;
+import com.marom.recipemongo.repositories.reactive.UnitOfMeasureReactiveRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import reactor.core.publisher.Flux;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 public class UnitOfMeasureServiceImplTest {
 
     @Mock
-    private UnitOfMeasureRepository unitOfMeasureRepository;
+    private UnitOfMeasureReactiveRepository unitOfMeasureRepository;
 
     @InjectMocks
     UnitOfMeasureService unitOfMeasureService = new UnitOfMeasureServiceImpl(unitOfMeasureRepository);
@@ -34,12 +34,11 @@ public class UnitOfMeasureServiceImplTest {
         //given
         UnitOfMeasure spoon = UnitOfMeasure.builder().id("uom1").description("desc1").build();
         UnitOfMeasure pinch = UnitOfMeasure.builder().id("pinch").description("desc2").build();
-        List<UnitOfMeasure> unitOfMeasureList = Arrays.asList(spoon, pinch);
 
         //when
-        when(unitOfMeasureRepository.findAll()).thenReturn(unitOfMeasureList);
+        when(unitOfMeasureRepository.findAll()).thenReturn(Flux.just(spoon, pinch));
 
-        List<UnitOfMeasure> returnedUom = unitOfMeasureService.listAllUoms();
+        List<UnitOfMeasure> returnedUom = unitOfMeasureService.listAllUoms().collectList().block();
 
         //then
         assertThat(returnedUom, hasSize(2));
