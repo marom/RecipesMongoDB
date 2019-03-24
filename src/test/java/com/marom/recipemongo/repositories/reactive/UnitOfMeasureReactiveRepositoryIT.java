@@ -15,6 +15,7 @@ import static org.junit.Assert.*;
 public class UnitOfMeasureReactiveRepositoryIT {
 
     private static final String CUP = "Cup";
+
     @Autowired
     UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
 
@@ -24,7 +25,7 @@ public class UnitOfMeasureReactiveRepositoryIT {
     }
 
     @Test
-    public void testSaveUom() {
+    public void saveUom() {
         UnitOfMeasure uom = new UnitOfMeasure();
         uom.setDescription(CUP);
 
@@ -37,7 +38,7 @@ public class UnitOfMeasureReactiveRepositoryIT {
     }
 
     @Test
-    public void testFindByDescription() {
+    public void findByDescription() {
         UnitOfMeasure uom = new UnitOfMeasure();
         uom.setDescription(CUP);
 

@@ -25,7 +25,7 @@ public class CategoryReactiveRepositoryIT {
     }
 
     @Test
-    public void testSave() {
+    public void saveCategory() {
         Category category = new Category();
         category.setDescription("Foo");
 
@@ -37,7 +37,7 @@ public class CategoryReactiveRepositoryIT {
     }
 
     @Test
-    public void testFindByDescription() {
+    public void findByDescription() {
         Category category = new Category();
         category.setDescription("Foo");
 
