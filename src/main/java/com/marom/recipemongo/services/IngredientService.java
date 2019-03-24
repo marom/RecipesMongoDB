@@ -1,12 +1,13 @@
 package com.marom.recipemongo.services;
 
 import com.marom.recipemongo.domain.Ingredient;
+import reactor.core.publisher.Mono;
 
 public interface IngredientService {
 
-    Ingredient findByRecipeIdAndIngredientId(String recipeId, String ingredientId);
+    Mono<Ingredient> findByRecipeIdAndIngredientId(String recipeId, String ingredientId);
 
-    Ingredient saveIngredient(Ingredient ingredient);
+    Mono<Ingredient> saveIngredient(Ingredient ingredient);
 
-    void deleteById(String recipeId, String ingredientId);
+    Mono<Void> deleteById(String recipeId, String ingredientId);
 }
