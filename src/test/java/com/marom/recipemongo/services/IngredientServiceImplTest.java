@@ -14,9 +14,10 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class IngredientServiceImplTest {
 
@@ -97,6 +98,50 @@ public class IngredientServiceImplTest {
 
         //then
         // exception is thrown as Ingredient is not matched/found
+    }
+
+    @Test
+    public void testSaveRecipeCommand() throws Exception {
+        //given
+        Ingredient ingredient = new Ingredient();
+        ingredient.setId("ingr1");
+        ingredient.setRecipeId("rec1");
+
+        Optional<Recipe> recipeOptional = Optional.of(new Recipe());
+
+        Recipe savedRecipe = new Recipe();
+        savedRecipe.addIngredient(new Ingredient());
+        savedRecipe.getIngredients().iterator().next().setId("ingr1");
+
+        when(recipeRepository.findById(anyString())).thenReturn(recipeOptional);
+        when(recipeRepository.save(any())).thenReturn(savedRecipe);
+
+        //when
+        Ingredient savedIngredient = ingredientService.saveIngredient(ingredient);
+
+        //then
+        assertEquals("ingr1", savedIngredient.getId());
+        verify(recipeRepository, times(1)).findById(anyString());
+        verify(recipeRepository, times(1)).save(any(Recipe.class));
+    }
+
+    @Test
+    public void deleteIngredientById() {
+        //given
+        Recipe recipe = new Recipe();
+        Ingredient ingredient = new Ingredient();
+        ingredient.setId("ingr23");
+        recipe.addIngredient(ingredient);
+        Optional<Recipe> recipeOptional = Optional.of(recipe);
+
+        when(recipeRepository.findById(anyString())).thenReturn(recipeOptional);
+
+        //when
+        ingredientService.deleteById("rec2", "ingr23");
+
+        //then
+        verify(recipeRepository, times(1)).findById(anyString());
+        verify(recipeRepository, times(1)).save(any(Recipe.class));
     }
 
 }
