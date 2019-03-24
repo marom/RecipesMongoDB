@@ -85,17 +85,7 @@ public class IngredientServiceImpl implements IngredientService {
                     .filter(recipeIngredients -> recipeIngredients.getId().equals(ingredient.getId()))
                     .findFirst();
 
-            //check by description
-            if(!savedIngredientOptional.isPresent()){
-                //not totally safe... But best guess
-                savedIngredientOptional = savedRecipe.getIngredients().stream()
-                        .filter(recipeIngredients -> recipeIngredients.getDescription().equals(ingredient.getDescription()))
-                        .filter(recipeIngredients -> recipeIngredients.getAmount().equals(ingredient.getAmount()))
-                        .filter(recipeIngredients -> recipeIngredients.getUom().getId().equals(ingredient.getUom().getId()))
-                        .findFirst();
-            }
-
-            //to do check for fail
+             //to do check for fail
             return savedIngredientOptional.get();
         }
     }
