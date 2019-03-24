@@ -2,6 +2,7 @@ package com.marom.recipemongo.services;
 
 import com.marom.recipemongo.domain.Ingredient;
 import com.marom.recipemongo.domain.Recipe;
+import com.marom.recipemongo.domain.UnitOfMeasure;
 import com.marom.recipemongo.exceptions.NotFoundException;
 import com.marom.recipemongo.repositories.RecipeRepository;
 import com.marom.recipemongo.repositories.UnitOfMeasureRepository;
@@ -10,6 +11,8 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -94,24 +97,57 @@ public class IngredientServiceImplTest {
         //when
         when(recipeRepository.findById(anyString())).thenReturn(recipeOptional);
 
-        Ingredient foundIngredient = ingredientService.findByRecipeIdAndIngredientId("recipe1", "nothing");
+        ingredientService.findByRecipeIdAndIngredientId("recipe1", "nothing");
 
         //then
         // exception is thrown as Ingredient is not matched/found
     }
 
     @Test
-    public void testSaveRecipeCommand() throws Exception {
+    public void testSaveForUpdateIngredient() {
         //given
+        UnitOfMeasure uom = UnitOfMeasure.builder().id("uom1").description("Pinch").build();
+
         Ingredient ingredient = new Ingredient();
         ingredient.setId("ingr1");
+        ingredient.setDescription("ingr desc");
+        ingredient.setAmount(new BigDecimal("5"));
+        ingredient.setRecipeId("rec1");
+        ingredient.setUom(uom);
+
+
+        Optional<Recipe> recipeOptional = Optional.of(new Recipe());
+        recipeOptional.get().setIngredients(new HashSet<>(Arrays.asList(ingredient)));
+
+        Recipe savedRecipe = new Recipe();
+        savedRecipe.addIngredient(ingredient);
+        savedRecipe.getIngredients().iterator().next().setId("ingr1");
+
+        when(recipeRepository.findById(anyString())).thenReturn(recipeOptional);
+        when(unitOfMeasureRepository.findById(anyString())).thenReturn(Optional.of(uom));
+        when(recipeRepository.save(any())).thenReturn(savedRecipe);
+
+        //when
+        Ingredient savedIngredient = ingredientService.saveIngredient(ingredient);
+
+        //then
+        assertEquals("ingr1", savedIngredient.getId());
+        verify(recipeRepository, times(1)).findById(anyString());
+        verify(recipeRepository, times(1)).save(any(Recipe.class));
+    }
+
+    @Test
+    public void testSaveNewIngredient() {
+        //given
+        Ingredient ingredient = new Ingredient();
+        ingredient.setDescription("ingr desc");
+        ingredient.setAmount(new BigDecimal("5"));
         ingredient.setRecipeId("rec1");
 
         Optional<Recipe> recipeOptional = Optional.of(new Recipe());
 
         Recipe savedRecipe = new Recipe();
-        savedRecipe.addIngredient(new Ingredient());
-        savedRecipe.getIngredients().iterator().next().setId("ingr1");
+        savedRecipe.addIngredient(ingredient);
 
         when(recipeRepository.findById(anyString())).thenReturn(recipeOptional);
         when(recipeRepository.save(any())).thenReturn(savedRecipe);
@@ -120,7 +156,7 @@ public class IngredientServiceImplTest {
         Ingredient savedIngredient = ingredientService.saveIngredient(ingredient);
 
         //then
-        assertEquals("ingr1", savedIngredient.getId());
+        assertEquals(ingredient.getId(), savedIngredient.getId());
         verify(recipeRepository, times(1)).findById(anyString());
         verify(recipeRepository, times(1)).save(any(Recipe.class));
     }
