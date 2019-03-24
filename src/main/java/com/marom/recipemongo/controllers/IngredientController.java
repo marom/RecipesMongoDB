@@ -71,7 +71,7 @@ public class IngredientController {
         ingredientDto.setRecipeId(recipeId);
 
         List<UnitOfMeasureDto> unitOfMeasureDtoList = new ArrayList<>();
-        unitOfMeasureService.listAllUoms().forEach(uom -> unitOfMeasureDtoList.add(toUnitOfMeasureDto.convert(uom)));
+        unitOfMeasureService.listAllUoms().collectList().block().forEach(uom -> unitOfMeasureDtoList.add(toUnitOfMeasureDto.convert(uom)));
 
         model.addAttribute("ingredient", ingredientDto);
         model.addAttribute("uomList", unitOfMeasureDtoList);
@@ -114,7 +114,7 @@ public class IngredientController {
         //init uom
         ingredientDto.setUom(new UnitOfMeasureDto());
 
-        model.addAttribute("uomList",  unitOfMeasureService.listAllUoms());
+        model.addAttribute("uomList",  unitOfMeasureService.listAllUoms().collectList().block());
 
         return "recipe/ingredient/updateIngredient";
     }
