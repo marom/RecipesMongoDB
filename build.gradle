@@ -41,6 +41,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.6'
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('io.projectreactor:reactor-test')
+    testCompile('net.bytebuddy:byte-buddy:1.9.11')
 
 }
 
