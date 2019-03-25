@@ -13,13 +13,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,12 +30,19 @@ public class RecipeController {
     private RecipeDtoToRecipe recipeDtoToRecipe;
     private CategoryToCategoryDto categoryToCategoryDto;
 
+    private WebDataBinder webDataBinder;
+
     public RecipeController(RecipeService recipeService, RecipeToRecipeDto recipeToRecipeDto, CategoryService categoryService, RecipeDtoToRecipe recipeDtoToRecipe, CategoryToCategoryDto categoryToCategoryDto) {
         this.recipeService = recipeService;
         this.recipeToRecipeDto = recipeToRecipeDto;
         this.categoryService = categoryService;
         this.recipeDtoToRecipe = recipeDtoToRecipe;
         this.categoryToCategoryDto = categoryToCategoryDto;
+    }
+
+    @InitBinder("recipe")
+    public void initBinder(WebDataBinder webDataBinder){
+        this.webDataBinder = webDataBinder;
     }
 
 
@@ -68,19 +72,26 @@ public class RecipeController {
         List<CategoryDto> categoriesDto = new ArrayList<>();
         categoryService.getAllCategories().forEach((Category category) -> categoriesDto.add(categoryToCategoryDto.convert(category)));
 
-        model.addAttribute("recipe", recipeService.findById(recipeId).map(recipeToRecipeDto::convert));
+        model.addAttribute("recipe",recipeToRecipeDto.convert(recipeService.findById(recipeId).block()));
         model.addAttribute("allCategories", categoriesDto);
 
         return "recipe/editRecipe";
     }
 
     @PostMapping("recipe")
-    public String updateRecipe(@Valid @ModelAttribute("recipe") RecipeDto recipeDto, BindingResult bindingResult) {
+    public String updateRecipe(@ModelAttribute("recipe") RecipeDto recipeDto, Model model) {
 
-        if (bindingResult.hasErrors()){
-            bindingResult.getAllErrors().forEach(objectError -> log.error(objectError.toString()));
+        webDataBinder.validate();
+        BindingResult bindingResult = webDataBinder.getBindingResult();
+
+        if(bindingResult.hasErrors()){
+
+            bindingResult.getAllErrors().forEach(objectError -> {
+                log.debug(objectError.toString());
+            });
             return "recipe/editRecipe";
         }
+
         Recipe savedRecipe = recipeService.saveRecipe(recipeDtoToRecipe.convert(recipeDto)).block();
 
         return "redirect:/recipe/" + savedRecipe.getId() + "/show" ;
