@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,9 +48,7 @@ public class IngredientController {
     public String listIngredients(@PathVariable String recipeId, Model model){
         log.debug("Getting ingredient list for recipe id: " + recipeId);
 
-        final RecipeDto recipeDto = toRecipeDto.convert(recipeService.findById(recipeId).block());
-        model.addAttribute("recipe", recipeDto);
-
+        model.addAttribute("recipe", recipeService.findById(recipeId).map(toRecipeDto::convert));
         return "recipe/ingredient/list";
     }
 
@@ -56,10 +56,10 @@ public class IngredientController {
     public String showIngredientDetails(@PathVariable String recipeId,
                                         @PathVariable String ingredientId,
                                         Model model) {
-        final Ingredient ingredient = ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId).block();
-        ingredient.setRecipeId(recipeId);
+        Mono<IngredientDto> ingredientDtoMono = ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId)
+                .map(toIngredientDto::convert);
 
-        model.addAttribute("ingredient", toIngredientDto.convert(ingredient));
+        model.addAttribute("ingredient", ingredientDtoMono);
         return "recipe/ingredient/show";
     }
 
@@ -68,13 +68,11 @@ public class IngredientController {
                                          @PathVariable String ingredientId, Model model){
 
         IngredientDto ingredientDto = toIngredientDto.convert(ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId).block());
-        ingredientDto.setRecipeId(recipeId);
 
-        List<UnitOfMeasureDto> unitOfMeasureDtoList = new ArrayList<>();
-        unitOfMeasureService.listAllUoms().collectList().block().forEach(uom -> unitOfMeasureDtoList.add(toUnitOfMeasureDto.convert(uom)));
+        Flux<UnitOfMeasureDto> unitOfMeasureDtoFlux = unitOfMeasureService.listAllUoms().map(toUnitOfMeasureDto::convert);
 
         model.addAttribute("ingredient", ingredientDto);
-        model.addAttribute("uomList", unitOfMeasureDtoList);
+        model.addAttribute("uomList", unitOfMeasureDtoFlux);
         return "recipe/ingredient/updateIngredient";
     }
 
