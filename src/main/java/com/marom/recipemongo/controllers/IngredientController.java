@@ -75,10 +75,7 @@ public class IngredientController {
 
         IngredientDto ingredientDto = toIngredientDto.convert(ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId).block());
 
-        Flux<UnitOfMeasureDto> unitOfMeasureDtoFlux = unitOfMeasureService.listAllUoms().map(toUnitOfMeasureDto::convert);
-
         model.addAttribute("ingredient", ingredientDto);
-        model.addAttribute("uomList", unitOfMeasureDtoFlux);
         return "recipe/ingredient/updateIngredient";
     }
 
@@ -93,7 +90,6 @@ public class IngredientController {
             bindingResult.getAllErrors().forEach(objectError -> {
                 log.debug(objectError.toString());
             });
-            model.addAttribute("uomList", unitOfMeasureService.listAllUoms().map(toUnitOfMeasureDto::convert));
             return "recipe/ingredient/updateIngredient";
         }
 
@@ -128,9 +124,11 @@ public class IngredientController {
 
         //init uom
         ingredientDto.setUom(new UnitOfMeasureDto());
-
-        model.addAttribute("uomList",  unitOfMeasureService.listAllUoms().collectList().block());
-
         return "recipe/ingredient/updateIngredient";
+    }
+
+    @ModelAttribute("uomList")
+    public Flux<UnitOfMeasureDto> getAllUoms() {
+        return unitOfMeasureService.listAllUoms().map(toUnitOfMeasureDto::convert);
     }
 }
