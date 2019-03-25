@@ -102,10 +102,12 @@ public class IngredientServiceImplTest {
     @Test
     public void testSaveNewIngredient() {
         //given
+        UnitOfMeasure uom = UnitOfMeasure.builder().id("uom1").description("Pinch").build();
         Ingredient ingredient = new Ingredient();
         ingredient.setDescription("ingr desc");
         ingredient.setAmount(new BigDecimal("5"));
         ingredient.setRecipeId("rec1");
+        ingredient.setUom(uom);
 
         Mono<Recipe> recipeMono = Mono.just(new Recipe());
 
@@ -113,6 +115,7 @@ public class IngredientServiceImplTest {
         savedRecipe.addIngredient(ingredient);
 
         when(recipeRepository.findById(anyString())).thenReturn(recipeMono);
+        when(unitOfMeasureRepository.findById(anyString())).thenReturn(Mono.just(uom));
         when(recipeRepository.save(any())).thenReturn(Mono.just(savedRecipe));
 
         //when
