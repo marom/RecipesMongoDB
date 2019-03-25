@@ -7,7 +7,6 @@ import com.marom.recipemongo.converters.UnitOfMeasureToUnitOfMeasureDto;
 import com.marom.recipemongo.domain.Ingredient;
 import com.marom.recipemongo.domain.Recipe;
 import com.marom.recipemongo.dto.IngredientDto;
-import com.marom.recipemongo.dto.RecipeDto;
 import com.marom.recipemongo.dto.UnitOfMeasureDto;
 import com.marom.recipemongo.services.IngredientService;
 import com.marom.recipemongo.services.RecipeService;
@@ -15,12 +14,11 @@ import com.marom.recipemongo.services.UnitOfMeasureService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Slf4j
 @Controller
@@ -34,6 +32,8 @@ public class IngredientController {
     private UnitOfMeasureService unitOfMeasureService;
     private IngredientDtoToIngredient toIngredient;
 
+    private WebDataBinder webDataBinder;
+
     public IngredientController(RecipeService recipeService, IngredientService ingredientService, RecipeToRecipeDto toRecipeDto, IngredientToIngredientDto toIngredientDto, UnitOfMeasureToUnitOfMeasureDto toUnitOfMeasureDto, UnitOfMeasureService unitOfMeasureService, IngredientDtoToIngredient toIngredient) {
         this.recipeService = recipeService;
         this.ingredientService = ingredientService;
@@ -43,6 +43,12 @@ public class IngredientController {
         this.unitOfMeasureService = unitOfMeasureService;
         this.toIngredient = toIngredient;
     }
+
+    @InitBinder("ingredient")
+    public void initBinder(WebDataBinder webDataBinder){
+        this.webDataBinder = webDataBinder;
+    }
+
 
     @GetMapping("/recipe/{recipeId}/ingredients")
     public String listIngredients(@PathVariable String recipeId, Model model){
@@ -77,8 +83,19 @@ public class IngredientController {
     }
 
     @PostMapping("recipe/{recipeId}/ingredient")
-    public String saveOrUpdate(@ModelAttribute IngredientDto ingredientDto){
+    public String saveOrUpdate(@ModelAttribute("ingredient") IngredientDto ingredientDto, Model model){
 
+        webDataBinder.validate();
+        BindingResult bindingResult = webDataBinder.getBindingResult();
+
+        if(bindingResult.hasErrors()) {
+
+            bindingResult.getAllErrors().forEach(objectError -> {
+                log.debug(objectError.toString());
+            });
+            model.addAttribute("uomList", unitOfMeasureService.listAllUoms().map(toUnitOfMeasureDto::convert));
+            return "recipe/ingredient/updateIngredient";
+        }
 
         Ingredient savedIngredient = ingredientService.saveIngredient(toIngredient.convert(ingredientDto)).block();
 
