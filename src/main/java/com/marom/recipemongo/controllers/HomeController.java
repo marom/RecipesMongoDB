@@ -19,7 +19,7 @@ public class HomeController {
     @GetMapping("/")
     public String displayAllRecipes(Model model) {
 
-        model.addAttribute("recipes", recipeService.getAllRecipes().collectList().block());
+        model.addAttribute("recipes", recipeService.getAllRecipes());
         return "allRecipes";
     }
 }
