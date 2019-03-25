@@ -33,10 +33,6 @@ public class IngredientServiceImpl implements IngredientService {
                 .findById(recipeId)
                 .flatMapIterable(Recipe::getIngredients)
                 .filter(ingredient -> ingredient.getId().equalsIgnoreCase(ingredientId))
-                .map(ingredient -> {
-                    ingredient.setRecipeId(recipeId);
-                    return ingredient;
-                })
                 .single();
     }
 
@@ -73,8 +69,6 @@ public class IngredientServiceImpl implements IngredientService {
                 //add new Ingredient
                 ingredient.setId(UUID.randomUUID().toString());
                 ingredient.setRecipeId(recipe.getId());
-                ingredient.setUom(unitOfMeasureRepository
-                        .findById(ingredient.getUom().getId()).block());
                 recipe.addIngredient(ingredient);
             }
 
