@@ -7,14 +7,17 @@ import com.marom.recipemongo.domain.Category;
 import com.marom.recipemongo.domain.Recipe;
 import com.marom.recipemongo.dto.CategoryDto;
 import com.marom.recipemongo.dto.RecipeDto;
+import com.marom.recipemongo.exceptions.NotFoundException;
 import com.marom.recipemongo.services.CategoryService;
 import com.marom.recipemongo.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.exceptions.TemplateInputException;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -54,17 +57,17 @@ public class RecipeController {
         return "recipe/viewRecipe";
     }
 
-    // todo broken after introduction webflux
-//    @ResponseStatus(HttpStatus.NOT_FOUND)
-//    @ExceptionHandler(NotFoundException.class)
-//    public ModelAndView handleNotFound(Exception exception){
-//
-//        ModelAndView modelAndView = new ModelAndView();
-//
-//        modelAndView.setViewName("404");
-//        modelAndView.addObject("exception", exception);
-//        return modelAndView;
-//    }
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler({NotFoundException.class, TemplateInputException.class})
+    public String handleNotFound(Exception exception, Model model){
+
+        log.error("Handling not found exception");
+        log.error(exception.getMessage());
+
+        model.addAttribute("exception", exception);
+
+        return "404";
+    }
 
     @GetMapping("/recipe/{recipeId}/update")
     public String showRecipeForUpdate(@PathVariable String recipeId, Model model) {
