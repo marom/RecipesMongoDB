@@ -2,27 +2,29 @@ package com.marom.recipemongo.controllers;
 
 import com.marom.recipemongo.domain.Recipe;
 import com.marom.recipemongo.services.RecipeService;
+import org.assertj.core.api.Assertions;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @Ignore("servlet is not loaded when using webflux")
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class HomeControllerTest {
+
+    @Autowired
+    private WebTestClient webTestClient;
 
     @Mock
     private RecipeService recipeService;
@@ -30,13 +32,14 @@ public class HomeControllerTest {
     @InjectMocks
     HomeController homeController;
 
-    MockMvc mockMvc;
+   // MockMvc mockMvc;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(homeController)
-                .build();
+        webTestClient = WebTestClient.bindToController(homeController).build();
+//        mockMvc = MockMvcBuilders.standaloneSetup(homeController)
+//                .build();
     }
 
     @Test
@@ -46,6 +49,15 @@ public class HomeControllerTest {
         when(recipeService.getAllRecipes()).thenReturn(recipes);
 
 
-        mockMvc.perform(get("/")).andExpect(status().isOk()).andExpect(view().name("allRecipes"));
+       // mockMvc.perform(get("/")).andExpect(status().isOk()).andExpect(view().name("allRecipes"));
+
+        webTestClient.get()
+                .uri("/")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .consumeWith(response ->
+                        Assertions.assertThat(response.getResponseBody()).isNotNull());
+
     }
 }
