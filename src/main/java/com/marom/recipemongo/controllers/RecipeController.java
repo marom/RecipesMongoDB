@@ -7,16 +7,17 @@ import com.marom.recipemongo.domain.Category;
 import com.marom.recipemongo.domain.Recipe;
 import com.marom.recipemongo.dto.CategoryDto;
 import com.marom.recipemongo.dto.RecipeDto;
-import com.marom.recipemongo.exceptions.NotFoundException;
 import com.marom.recipemongo.services.CategoryService;
 import com.marom.recipemongo.services.RecipeService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -44,21 +45,22 @@ public class RecipeController {
     @GetMapping("/recipe/{recipeId}/show")
     public String showRecipe(@PathVariable String recipeId, Model model) {
 
-        Recipe recipe = recipeService.findById(recipeId).block();
+        Mono<Recipe> recipe = recipeService.findById(recipeId);
         model.addAttribute("recipe", recipe);
         return "recipe/viewRecipe";
     }
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NotFoundException.class)
-    public ModelAndView handleNotFound(Exception exception){
-
-        ModelAndView modelAndView = new ModelAndView();
-
-        modelAndView.setViewName("404");
-        modelAndView.addObject("exception", exception);
-        return modelAndView;
-    }
+    // todo broken after introduction webflux
+//    @ResponseStatus(HttpStatus.NOT_FOUND)
+//    @ExceptionHandler(NotFoundException.class)
+//    public ModelAndView handleNotFound(Exception exception){
+//
+//        ModelAndView modelAndView = new ModelAndView();
+//
+//        modelAndView.setViewName("404");
+//        modelAndView.addObject("exception", exception);
+//        return modelAndView;
+//    }
 
     @GetMapping("/recipe/{recipeId}/update")
     public String showRecipeForUpdate(@PathVariable String recipeId, Model model) {
@@ -66,7 +68,7 @@ public class RecipeController {
         List<CategoryDto> categoriesDto = new ArrayList<>();
         categoryService.getAllCategories().forEach((Category category) -> categoriesDto.add(categoryToCategoryDto.convert(category)));
 
-        model.addAttribute("recipe", recipeToRecipeDto.convert(recipeService.findById(recipeId).block()));
+        model.addAttribute("recipe", recipeService.findById(recipeId).map(recipeToRecipeDto::convert));
         model.addAttribute("allCategories", categoriesDto);
 
         return "recipe/editRecipe";
